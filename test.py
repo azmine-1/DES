@@ -1,5 +1,5 @@
 import unittest
-from des import DES
+from DES import DES
 import os
 
 class TestDES(unittest.TestCase):
