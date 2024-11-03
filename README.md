@@ -35,24 +35,76 @@ decrypted = des.decrypt(encrypted)
 This needs work.
 ```mermaid
 graph TD
-    A[Input Data] --> B[Padding]
-    B --> C[Split into 64-bit blocks]
-    C --> D[Initial Permutation]
-    D --> E[16 Feistel Rounds]
-    E --> F[Final Permutation]
-    F --> G[Combine Blocks]
-    G --> H[Output Data]
-
-    subgraph "Key Schedule"
-        K[64-bit Key] --> L[Generate 16 Round Keys]
-        L --> E
+    %% Main Data Flow
+    Input[64-bit Input Block] --> InitPerm[Initial Permutation]
+    InitPerm --> Split[Split Block]
+    Split --> |Left 32 bits| L0[L₀]
+    Split --> |Right 32 bits| R0[R₀]
+    
+    %% Round Structure
+    L0 --> |Copy| L1[L₁]
+    R0 --> FFunc[F-Function]
+    FFunc --> XOR1[⊕]
+    L0 --> XOR1
+    XOR1 --> R1[R₁]
+    
+    %% Expansion Details
+    R0 --> |32 bits| Expand[Expansion E-Box]
+    Expand --> |48 bits| KeyMix[Key Mixing ⊕]
+    
+    %% S-Box Process
+    KeyMix --> SBoxes[8 S-Boxes]
+    SBoxes --> |32 bits| Perm[P-Box Permutation]
+    Perm --> FOut[F-Function Output]
+    
+    %% Key Schedule
+    Key[64-bit Key Input] --> KeyPerm[Key Permutation PC-1]
+    KeyPerm --> |56 bits| Split2[Split Key]
+    Split2 --> |28 bits| C0[C₀]
+    Split2 --> |28 bits| D0[D₀]
+    C0 --> Shift[Left Shift]
+    D0 --> Shift
+    Shift --> PC2[Permutation PC-2]
+    PC2 --> |48-bit Round Key| KeyMix
+    
+    %% Final Steps
+    R1 --> |After 16 rounds| Swap[32-bit Swap]
+    L1 --> |After 16 rounds| Swap
+    Swap --> FinalPerm[Final Permutation]
+    FinalPerm --> Output[64-bit Output Block]
+    
+    %% Styling
+    classDef process fill:#f9f,stroke:#333,stroke-width:2px
+    classDef data fill:#bbf,stroke:#333,stroke-width:2px
+    classDef key fill:#bfb,stroke:#333,stroke-width:2px
+    
+    class Input,Output,Key data
+    class InitPerm,FinalPerm,SBoxes,Perm,KeyPerm,PC2 process
+    class KeyMix,XOR1 key
+    
+    %% Notes
+    subgraph "Key Schedule Process"
+        Key
+        KeyPerm
+        Split2
+        Shift
+        PC2
     end
-
-    subgraph "Feistel Round"
-        M[32-bit Right Half] --> N[Expansion]
-        N --> O[XOR with Round Key]
-        O --> P[S-box Substitution]
-        P --> Q[Permutation]
+    
+    subgraph "Main Encryption Flow"
+        Input
+        InitPerm
+        Split
+        FFunc
+        FinalPerm
+        Output
+    end
+    
+    subgraph "F-Function Details"
+        Expand
+        KeyMix
+        SBoxes
+        Perm
     end
 ```
 
