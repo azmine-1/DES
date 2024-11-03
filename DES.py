@@ -114,6 +114,46 @@ class DES:
             round_key = self._permute(left + right, self.PC2)
             round_keys.append(round_key)
         return round_keys
+    def _f_function(self, right_half, round_key):
+        expanded = self._permute(right_half, self.E)
+        xored = ''.join('1' if a != b else '0' for a, b in zip(expanded, round_key))
+        output = ''
+        for i in range(8):
+            block = xored[i*6:(i+1)*6]
+            row = int(block[0] + block[5], 2)
+            col = int(block[1:5], 2)
+            val = self.S_BOXES[i][row][col]
+            output += format(val, '04b')
+        return self._permute(output, self.P)
+
+    def _process_block(self, block, decrypt=False):
+        block_bits = self._bytes_to_bits(block)
+        block_bits = self._permute(block_bits, self.IP)
+        left = block_bits[:32]
+        right = block_bits[32:]
+        round_keys = self.round_keys[::-1] if decrypt else self.round_keys
+        for round_key in round_keys:
+            new_right = self._f_function(right, round_key)
+            new_right = ''.join('1' if a != b else '0' for a, b in zip(left, new_right))
+            left = right
+            right = new_right
+        final_block = self._permute(right + left, self.FP)
+        return self._bits_to_bytes(final_block)
+
+    def encrypt(self, data):
+        if len(data) % 8 != 0:
+            pad_length = 8 - (len(data) % 8)
+            data += bytes([pad_length] * pad_length)
+        return b''.join(self._process_block(data[i:i+8]) for i in range(0, len(data), 8))
+
+    def decrypt(self, data):
+        if len(data) % 8 != 0:
+            raise ValueError("Data length must be multiple of 8 bytes")
+        decrypted = b''.join(self._process_block(data[i:i+8], decrypt=True) for i in range(0, len(data), 8))
+        pad_length = decrypted[-1]
+        if pad_length < 8:
+            decrypted = decrypted[:-pad_length]
+        return decrypted
             
         
     
