@@ -1,6 +1,6 @@
 # DES (Data Encryption Standard) Implementation
 
-A pure Python implementation of the DES (Data Encryption Standard) encryption algorithm. This implementation provides a clean, efficient, and easy-to-use interface for DES encryption and decryption without any external dependencies.
+A pure Python implementation of the DES (Data Encryption Standard) encryption algorithm. This implementation provides a clean, efficient, and easy-to-use interface for DES encryption and decryption without any external dependencies. https://page.math.tu-berlin.de/~kant/teaching/hess/krypto-ws2006/des.htm illustration was used for learning. 
 
 ## Features
 
