@@ -86,9 +86,34 @@ class DES:
              [1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2],
              [7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8],
              [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11]]
-    def __init__(self,key):
-        self.key = key 
-        self.
+    ]
+    def __init__(self, key):
+        if len(key) != 8:
+            raise ValueError("Key must be 64 bits (8 bytes) long")
+        self.key = key
+        self.round_keys = self._generate_round_keys()
+
+    def _bytes_to_bits(self, bytes_data):
+        return ''.join(format(b if isinstance(b, int) else ord(b), '08b') for b in bytes_data)
+
+    def _bits_to_bytes(self, bits):
+        return bytes(int(bits[i:i+8], 2) for i in range(0, len(bits), 8))
+
+    def _permute(self, block, table):
+        return ''.join(block[i-1] for i in table)
+
+    def _generate_round_keys(self):
+        key_bits = self._bytes_to_bits(self.key)
+        key_56 = self._permute(key_bits, self.PC1)
+        left = key_56[:28]
+        right = key_56[28:]
+        round_keys = []
+        for shift in self.SHIFTS:
+            left = left[shift:] + left[:shift]
+            right = right[shift:] + right[:shift]
+            round_key = self._permute(left + right, self.PC2)
+            round_keys.append(round_key)
+        return round_keys
             
-        ]
+        
     
