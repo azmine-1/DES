@@ -19,17 +19,7 @@ Simply copy the `des.py` file into your project directory.
 
 ### Working with Different Data Types
 
-```python
-# Working with strings
-text = "Hello!"
-encrypted = des.encrypt(text.encode())  # Convert string to bytes first
-decrypted = des.decrypt(encrypted).decode()  # Convert bytes back to string
-
-# Working with binary data
-binary_data = b'\x00\x01\x02\x03\x04\x05'
-encrypted = des.encrypt(binary_data)
-decrypted = des.decrypt(encrypted)
-```
+Always ideal to operate on raw bytes but strings are also supported. 
 
 ## Implementation Details
 This needs work.
