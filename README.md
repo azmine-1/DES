@@ -92,30 +92,8 @@ graph TD
 ### File Encryption
 
 ```python
-def encrypt_file(input_path, output_path, key):
-    des = DES(key)
-    with open(input_path, 'rb') as f_in, open(output_path, 'wb') as f_out:
-        data = f_in.read()
-        encrypted = des.encrypt(data)
-        f_out.write(encrypted)
-
-def decrypt_file(input_path, output_path, key):
-    des = DES(key)
-    with open(input_path, 'rb') as f_in, open(output_path, 'wb') as f_out:
-        data = f_in.read()
-        decrypted = des.decrypt(data)
-        f_out.write(decrypted)
+python test.py
 ```
 
-### String Encryption
 
-```python
-def encrypt_string(text, key):
-    des = DES(key)
-    return des.encrypt(text.encode())
-
-def decrypt_string(encrypted_data, key):
-    des = DES(key)
-    return des.decrypt(encrypted_data).decode()
-```
 
