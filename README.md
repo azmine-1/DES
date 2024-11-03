@@ -15,24 +15,7 @@ A pure Python implementation of the DES (Data Encryption Standard) encryption al
 
 Simply copy the `des.py` file into your project directory.
 
-## Usage
 
-### Basic Usage
-
-```python
-from des import DES
-
-# Initialize with an 8-byte key
-des = DES(b"SECRETKY")
-
-# Encrypt some data
-plaintext = b"Hello, World!"
-encrypted = des.encrypt(plaintext)
-
-# Decrypt the data
-decrypted = des.decrypt(encrypted)
-print(decrypted == plaintext)  # True
-```
 
 ### Working with Different Data Types
 
